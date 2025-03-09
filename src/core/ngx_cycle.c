@@ -363,6 +363,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 
     cycle->host_specs->host_cpu = ngx_alloc(sizeof(ngx_str_t), log);
     if (cycle->host_specs->host_cpu == NULL) {
+        ngx_free(cycle->host_specs);
         ngx_destroy_pool(pool);
         return NULL;
     }
@@ -456,6 +457,9 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     ccf = (ngx_core_conf_t *) ngx_get_conf(cycle->conf_ctx, ngx_core_module);
 
     if (!ccf->remote_admin) {
+        ngx_free(cycle->host_specs->host_cpu->data);
+        ngx_free(cycle->host_specs->host_cpu);
+        ngx_free(cycle->host_specs->host_mem);
         ngx_free(cycle->host_specs);
     }
 
