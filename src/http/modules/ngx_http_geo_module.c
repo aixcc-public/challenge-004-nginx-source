@@ -1630,7 +1630,12 @@ ngx_http_geo_create_binary_base(ngx_http_geo_conf_ctx_t *ctx)
             hash = ngx_crc32_long(s.data, s.len);
             gvvn = (ngx_http_geo_variable_value_node_t *)
                         ngx_str_rbtree_lookup(&ctx->rbtree, &s, hash);
-
+            
+            if (gvvn == NULL) {
+                ngx_log_error(NGX_LOG_ALERT, fm.log, 0,
+                                "failed to find value \"%V\"", &s);
+                return;
+            }
             range->value = (ngx_http_variable_value_t *) gvvn->offset;
             range->start = r->start;
             range->end = r->end;
